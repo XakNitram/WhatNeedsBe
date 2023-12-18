@@ -1,0 +1,27 @@
+{% block doc %}
+  <!DOCTYPE html>
+  <html lang="en-us" {%+ block html_attributes %}{% endblock html_attributes %}>
+  {% block html %}
+    <head>
+      {% block head %}
+        <title>{% block title %}{{ title|default("WhatNeedsBe", true) }}{% endblock title %}</title>
+        {% block metas %}
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta charset="UTF-8">
+        {% endblock metas %}
+        {% block styles %}
+        {% endblock styles %}
+        {% block links %}
+          {#    <link rel="icon" href="/favicon.ico">#}
+        {% endblock links %}
+        {% block scripts %}
+        {% endblock scripts %}
+      {% endblock head %}
+    </head>
+    {% block body %}
+      <body>
+      </body>
+    {% endblock body %}
+  {% endblock html %}
+  </html>
+{% endblock doc %}
