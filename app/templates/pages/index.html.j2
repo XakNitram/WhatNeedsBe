@@ -5,6 +5,18 @@
       <h1>What Needs to Be Done?</h1>
 {#    Figure out a LOB way to reload this when a new task is created. #}
       <div hx-get="{{ url_for("task.get") }}" hx-trigger="load,TaskCreated from:body" hx-swap="innerHTML"></div>
+{#    ^ Rather than including the database query in the index page, we can move all task querying to the /task/ blueprint
+         by having htmx load the task-list(.html.j2) as a separate component. That component also handles styling.
+
+        The /task/ API endpoint can be made to accept parameters to customize styling or behavior.
+         I.e. ?page, ?style, ?category=time-sensitive.
+
+        The hx-trigger="TaskCreated from:body" is a server-side event htmx receives by completing the request
+         initiated by the form below. When a user creates a new task and the task is successfully created
+         in the database, htmx updates the task list above.
+
+        See app/blueprints/task.py for more info.
+#}
       <hr>
       <h3>New</h3>
       <form hx-post="{{ url_for("task.create") }}" hx-swap="none">
