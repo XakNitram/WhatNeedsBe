@@ -1,7 +1,17 @@
 {% block body %}
   <body>
-  <div>
-    <h3>Hello, world!</h3>
+  <div class="container mx-auto bg-transparent h-screen shadow">
+    <div class="p-2 h-full bg-white">
+      <h1>What Needs to Be Done?</h1>
+{#    Figure out a LOB way to reload this when a new task is created. #}
+      <div hx-get="{{ url_for("task.get") }}" hx-trigger="load,TaskCreated from:body" hx-swap="innerHTML"></div>
+      <hr>
+      <h3>New</h3>
+      <form hx-post="{{ url_for("task.create") }}" hx-swap="none">
+        <input type="text" name="summary" aria-label="Summary" class="px-2 rounded-s border border-black bg-white focus:bg-gray-200 hover:bg-gray-200">
+        <button class="rounded-e bg-blue-400">Submit</button>
+      </form>
+    </div>
   </div>
   </body>
 {% endblock %}

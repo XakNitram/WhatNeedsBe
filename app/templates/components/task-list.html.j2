@@ -1,0 +1,16 @@
+<div class="max-w-full max-h-full">
+  {% if task_list %}
+    <ul>
+      {% for task in task_list %}
+        <li class="p-2 rounded shadow flex">
+          <span class="flex-none">{{ task.summary }}</span>
+          <span class="flex-1"></span>
+          <button class="flex-none w-32 bg-blue-500 hover:bg-blue-400 rounded shadow">Complete</button>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No tasks here.</p>
+  {% endif %}
+</div>
+{# Allow the user to create a page select system (or not) rather than forcing one here.#}
