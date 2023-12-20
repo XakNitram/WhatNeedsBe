@@ -1,5 +1,5 @@
 # WhatNeedsBe
-## An ambitious task list.
+### Trello-inspired task tracker.
 
 ### MVP
 A simple list of tasks.
