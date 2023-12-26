@@ -38,10 +38,13 @@ def create():
         #  but this can change in the future.
         response = make_response(f"<p>{summary}</p>", 201)
 
-        # The HX-Trigger header is read by HTMX, which emits the event in the DOM.
-        # Not sure that I'm comfortable with this method, but it works, and it can be a documented feature of the API
-        #  used to trigger events client-side.
-        response.headers['HX-Trigger'] = "TaskCreated"
+        # HTMX includes HX-Trigger in the request headers indicating the ID of the element that triggered the request.
+        # The HX-Trigger response header is read by HTMX, which emits an event under that name in the DOM.
+        # If we return the content of the HX-Trigger request header in the HX-Trigger response header,
+        #  we can use the ID of the element that triggered the request as an event name to listen for in the DOM.
+        # Watching multiple elements for requests can be achieved with:
+        #  hx-trigger="task-create from:body,task-delete from:body"
+        response.headers['HX-Trigger'] = request.headers.get('HX-Trigger')
         return response
     else:
         return make_response(jsonify({"summary": summary}), 201)
