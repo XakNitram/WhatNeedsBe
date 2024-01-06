@@ -1,7 +1,8 @@
-POST http://localhost:5000/
+POST http://localhost:5000/task
 Content-Type: application/x-www-form-urlencoded
 
-id = 0 &
-title = test
+id = 957 &
+summary = test957
 
 ###
+GET http://localhost:5000/task/detail/1

@@ -1,0 +1,5 @@
+<form id="description-form" class="flex rounded" hx-patch="{{ url_for("task.patch", task_id=task.id) }}"
+      hx-swap="outerHTML">
+  <textarea autofocus class="p-2 bg-blue-100 flex-1" name="description" aria-label="Description">{{ task.description|default("", True) }}</textarea>
+  <button type="submit" class="block rounded bg-blue-400">Add</button>
+</form>

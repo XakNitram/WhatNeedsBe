@@ -2,10 +2,15 @@
   {% if task_list %}
     <ul>
       {% for task in task_list %}
-        <li class="p-2 rounded shadow flex">
-          <span class="flex-none">{{ task.summary }}</span>
-          <span class="flex-1"></span>
-          <button class="flex-none w-32 bg-blue-500 hover:bg-blue-400 rounded shadow">Complete</button>
+        <li class="first:mt-0 mt-2 rounded shadow">
+          <details class="group open:bg-blue-50">
+            <summary class="p-2 flex group-open:bg-blue-200 rounded-t">
+              <span class="flex-none">{{ task.summary }}</span>
+              <span class="flex-1"></span>
+              <button class="flex-none w-32 bg-blue-500 hover:bg-blue-400 rounded shadow visible group-open:invisible">Complete</button>
+            </summary>
+            <div class="p-2" hx-get="{{ url_for("task.detail", task_id=task.id) }}" hx-trigger="intersect once" hx-swap="innerHTML"></div>
+          </details>
         </li>
       {% endfor %}
     </ul>

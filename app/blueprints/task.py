@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, make_response, jsonify, abort
+from jinja2_fragments.flask import render_block
 from sqlalchemy import select
 
 from app.extensions import db
@@ -10,7 +11,7 @@ bp = Blueprint('task', __name__, url_prefix="/task")
 
 @bp.route('/', methods=["GET"])
 def get():
-    task_list = tuple(db.session.scalars(select(Task).order_by(Task.id.asc())))
+    task_list = tuple(db.session.scalars(select(Task).order_by(Task.summary.asc())))
 
     # HTMX wants endpoints to return html, so this is a html-api similar to xml apis.
     # We can also use the htmx headers to decide to return data in the traditional json (or xml) format.
@@ -22,12 +23,12 @@ def get():
         return make_response(jsonify({tid: task.id for tid, task in task_list}))
 
 
-@bp.route('/', methods=["POST"])
+@bp.route('/', methods=["POST", "PUT"])
 def create():
     summary = request.form['summary']
     if not summary:
         return abort(400, message="Missing summary parameter.")
-    task = Task(summary=summary)
+    task = Task(summary=summary)  # TODO: Allow passing other parameters
     db.session.add(task)
     db.session.commit()
 
@@ -46,5 +47,45 @@ def create():
         #  hx-trigger="task-create from:body,task-delete from:body"
         response.headers['HX-Trigger'] = request.headers.get('HX-Trigger')
         return response
-    else:
-        return make_response(jsonify({"summary": summary}), 201)
+    return make_response(jsonify(task.as_dict()), 201)
+
+
+@bp.route('/detail/<int:task_id>', methods=["GET"])
+def detail(task_id: int):
+    try:
+        task_id = int(task_id)
+    except ValueError:
+        return abort(400, message="Invalid task ID parameter.")
+    task = db.session.scalar(select(Task).filter(Task.id == task_id))
+
+    if not task:
+        return abort(400, message=f"No task found for id {task_id}.")
+    if is_htmx_request():
+        element = request.headers.get("HX-Trigger", "")
+        if element == "description":
+            return render_template("components/task-description-edit.html.j2", task=task)
+        if element == "description-edit":
+            return render_template("components/task-description.html.j2", task=task)
+        return render_template("components/task-details.html.j2", task=task)
+    return make_response(jsonify(task.as_dict()), 200)
+
+
+@bp.route('/detail/<int:task_id>', methods=["PATCH"])
+def patch(task_id: int):
+    try:
+        task_id = int(task_id)
+    except ValueError:
+        return abort(400, message="Invalid task ID parameter.")
+
+    task = db.session.scalar(select(Task).filter(Task.id == task_id))
+    if not task:
+        return abort(400, message=f"No task found for id {task_id}.")
+
+    description = request.form.get("description", "")
+    if description:
+        task.description = description
+        db.session.commit()
+
+    if is_htmx_request():
+        return render_template("components/task-description.html.j2", task=task)
+    return make_response(jsonify({"description": task.description}), 200)

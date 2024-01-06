@@ -1,0 +1,10 @@
+{% if task.description %}
+  <p id="description" aria-label="Description" hx-get="{{ url_for("task.detail", task_id=task.id) }}"
+     hx-trigger="click" hx-swap="outerHTML">{{ task.description }}</p>
+{% else %}
+  <div id="description" class="h-24 p-2 bg-blue-100 rounded cursor-pointer border shadow"
+       hx-get="{{ url_for("task.detail", task_id=task.id) }}"
+       hx-trigger="click" hx-swap="outerHTML">
+    <p class="mt-0">Add a more detailed description...</p>
+  </div>
+{% endif %}
